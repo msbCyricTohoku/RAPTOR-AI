@@ -412,25 +412,34 @@ def phantom(countx,count,imgw,imgh,x,y,RI, proj,
         #    txtfile.write(f" {shield}\n")
         
         if(int(shieldcount) > 0):
+            written_materials = set() #ensures materials will be written only once
+
             for item in shield_coords:
                 image_name, prediction, confidence, xmin, xmax, ymin, ymax = item
-                if(prediction=='lead'):
+                
+                if prediction == 'lead' and 'lead' not in written_materials:
                     txtfile.write('\n')
                     txtfile.write('mat[17]      $lead\n')
                     txtfile.write(f" {lead}\n")
-                if(prediction=='concrete'):
+                    written_materials.add('lead')
+                    
+                if prediction == 'concrete' and 'concrete' not in written_materials:
                     txtfile.write('\n')
                     txtfile.write('mat[18]      $concrete\n')
                     txtfile.write(f" {concrete}\n")
-                if(prediction=='pe'):
+                    written_materials.add('concrete')
+                    
+                if prediction == 'pe' and 'pe' not in written_materials:
                     txtfile.write('\n')
                     txtfile.write('mat[19]      $polyethylene\n')
                     txtfile.write(f" {pe}\n")
-                if(prediction=='custom'):
+                    written_materials.add('pe')
+                    
+                if prediction == 'custom' and 'custom' not in written_materials:
                     txtfile.write('\n')
                     txtfile.write('mat[20]      $custom-materials\n')
-                    txtfile.write(f" {custom}\n")    
-        
+                    txtfile.write(f" {custom}\n")
+                    written_materials.add('custom')
 
         txtfile.write('\n')
 

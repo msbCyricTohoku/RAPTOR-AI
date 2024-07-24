@@ -1,0 +1,7 @@
+Pillow==9.1.0
+numpy
+torch
+ultralytics
+setuptools
+dill
+ttkthemes

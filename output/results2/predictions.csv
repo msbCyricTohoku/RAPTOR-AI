@@ -1,0 +1,6 @@
+Image Name,Prediction,Confidence,Coordinates
+test7.png,concrete,0.77,"135.0,278.0,316.0,293.0"
+test7.png,concrete,0.77,"154.0,125.0,332.0,139.0"
+test7.png,concrete,0.79,"138.0,93.0,151.0,276.0"
+test7.png,concrete,0.79,"334.0,63.0,348.0,249.0"
+test7.png,path,0.84,"250.0,197.0,275.0,222.0"

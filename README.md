@@ -22,7 +22,7 @@ How to:
 13. open "config.ini", you can turn on the "runphits" function so that the program automatically runs all your generated scripts for every detected position automatically. (set the value to 1 to turn on)
 14. considering the "backup" option, the program automatically generates a tar.gz backup of your "working_dir" for you. (set the value to 1 to turn on)
 
-Should you encounter any bugs or issues, please do not hesitate to contact me via email at: ben.sh@tohoku.ac.jp or ben.sh@my.cityu.edu.hk
+Should you encounter any bugs or issues, please do not hesitate to contact me via email.
 
 enjoy!
 20240725

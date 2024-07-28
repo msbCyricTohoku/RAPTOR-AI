@@ -13,7 +13,7 @@ How to:
 4. python3 -m venv .venv
 5. source .venv/bin/activate
 6. run "make install", this installs all the dependencies (note if you have conflict, just keep using your own version of libs)
-7. run "make" -- you will see the GUI of the DynamicMC AI
+7. run "make" -- you will see the GUI of the RAPTOR-AI
 8. click on "open" navigate to "test" folder containing the images.
 9. as an example select "cyrric_marked2.png" and open.
 10. change the parameter for your Monte Carlo model such as isotope, maxcas, etc.

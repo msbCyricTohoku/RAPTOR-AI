@@ -152,7 +152,7 @@ class InferenceApp:
 
     def run_inference(self):
         yolov5_path = 'yolov5'
-        weights_path = 'trained_model/best.pt'
+        weights_path = 'trained_model/raptor-20240725.pt'
         source_dir = self.input_image_path
         output_dir = 'output'
 

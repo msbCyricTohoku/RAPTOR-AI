@@ -24,6 +24,16 @@ import os
 import csv
 from pathlib import Path
 from codegen import phantom  #this calls the human phantom generator module
+import configparser
+
+
+ #create a ConfigParser object
+config = configparser.ConfigParser()
+
+#read the parameters from the config file
+config.read('model_loader.ini')
+modelname = config['ModelParameter']['modelname'] #model name to load
+modelconfidence = config['ModelParameter']['modelconfidence'] #model confidence level
 
 class InferenceApp:
     def __init__(self, root):
@@ -152,7 +162,7 @@ class InferenceApp:
 
     def run_inference(self):
         yolov5_path = 'yolov5'
-        weights_path = 'trained_model/raptor-20240725.pt'
+        weights_path = f'trained_model/{modelname}'
         source_dir = self.input_image_path
         output_dir = 'output'
 
@@ -161,7 +171,7 @@ class InferenceApp:
             'python', f'{yolov5_path}/detect.py',
             '--weights', weights_path,
             '--img', '640',
-            '--conf', '0.3',
+            '--conf', f'{modelconfidence}',
             '--source', source_dir,
             '--project', output_dir,
             '--name', 'results',

@@ -161,7 +161,7 @@ class InferenceApp:
             'python', f'{yolov5_path}/detect.py',
             '--weights', weights_path,
             '--img', '640',
-            '--conf', '0.7',
+            '--conf', '0.3',
             '--source', source_dir,
             '--project', output_dir,
             '--name', 'results',

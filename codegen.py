@@ -25,12 +25,12 @@ import os
 def read_coordinates_from_file(file_path):
     coordinates = []
     with open(file_path, 'r') as file:
-        # Skip the header line
+        #skip the header line
         header = file.readline()
         
         # Read the rest of the lines
         for line in file:
-            # Split the line by commas and convert each value to float
+            #split the line by commas and convert each value to float
             xmin, xmax, ymin, ymax = map(float, line.strip().split(','))
             coordinates.append({
                 'xmin': xmin,
@@ -40,6 +40,56 @@ def read_coordinates_from_file(file_path):
             })
     
     return coordinates
+
+def check_overlap(box1, box2):
+    #unpack the coordinates
+    #note we skip image_name, prediction, confidence, which first three elements in shield coordinate
+    _, _, _, xmin1, xmax1, ymin1, ymax1 = box1
+    _, _, _, xmin2, xmax2, ymin2, ymax2 = box2
+
+    #check for overlap
+    overlap_x = not (xmin1 > xmax2 or xmax1 < xmin2)
+    overlap_y = not (ymin1 > ymax2 or ymax1 < ymin2)
+
+    return overlap_x and overlap_y
+
+def check_for_overlaps(shield_coords):
+    for i in range(len(shield_coords) - 1):
+        current_box = shield_coords[i]
+        next_box = shield_coords[i + 1]
+        if check_overlap(current_box, next_box):
+            return True
+    return False
+'''
+def find_overlaps(shield_coords):
+    overlaps = {}
+    for i in range(len(shield_coords)):
+        current_box = shield_coords[i]
+        overlaps[i] = []
+        for j in range(len(shield_coords)):
+            if i != j:
+                next_box = shield_coords[j]
+                if check_overlap(current_box, next_box):
+                    overlaps[i].append(j)
+    return overlaps
+'''
+
+def find_overlaps(shield_coords):
+    overlaps = {}
+    processed_pairs = set()
+
+    for i in range(len(shield_coords)):
+        current_box = shield_coords[i]
+        overlaps[i] = []
+        for j in range(i + 1, len(shield_coords)):  # Start from i + 1 to avoid double counting
+            next_box = shield_coords[j]
+            pair = (i, j)
+            if pair not in processed_pairs and check_overlap(current_box, next_box):
+                overlaps[i].append(j)
+                overlaps.setdefault(j, []).append(i)
+                processed_pairs.add(pair)
+                
+    return overlaps
 
 def phantom(countx,count,imgw,imgh,x,y,RI, proj, 
               activity, tally,maxcas,maxbch, 
@@ -1031,23 +1081,71 @@ def phantom(countx,count,imgw,imgh,x,y,RI, proj,
         txtfile.write(f"902 6 {rho14} -903 904 -901 #801 #803 #805 #807 #810 #811\n")
         txtfile.write(f"903 6 {rho14} -903 902 -905 #344 #345 #346 #347 #500 #501\n")
 
+
+        overlaps_exist = check_for_overlaps(shield_coords)
+        if overlaps_exist:
+            print("Overlap detected between some boxes.")
+        else:
+            print("No overlaps detected between the boxes.")
+
         if(int(shieldcount) > 0):
+            overlaps = find_overlaps(shield_coords)
             k=0
-            for item in shield_coords:
-                image_name, prediction, confidence, xmin, xmax, ymin, ymax = item
-                if(prediction=='lead'):
-                    #txtfile.write('\n')
-                    txtfile.write(f"91{k} 17 {leadrho} -91{k}\n")
-                    k += 1
-                if(prediction=='concrete'):
-                    txtfile.write(f"91{k} 18 {concreterho} -91{k}\n")
-                    k += 1
-                if(prediction=='pe'):
-                    txtfile.write(f"91{k} 19 {perho} -91{k}\n")
-                    k += 1
-                if(prediction=='custom'):
-                    txtfile.write(f"91{k} 20 {customrho} -91{k}\n")
-                    k += 1   
+            for i in range(len(shield_coords) - 1):
+
+                current_box = shield_coords[i]
+                
+                next_box = shield_coords[i + 1]
+                #depends on the type of shield print the first one
+
+                # Process the current box based on its prediction
+                image_name, prediction, confidence, xmin, xmax, ymin, ymax = current_box
+
+                # Prepare the overlap string
+                overlap_str = ''
+                if overlaps[i]:
+                    overlap_str = ' #' + ' #'.join(f"91{j}" for j in overlaps[i])
+
+
+                # Write the output based on prediction
+                if prediction == 'lead':
+                    txtfile.write(f"91{k} 17 {leadrho} -91{k}{overlap_str}\n")
+                elif prediction == 'concrete':
+                    txtfile.write(f"91{k} 18 {concreterho} -91{k}{overlap_str}\n")
+                elif prediction == 'pe':
+                    txtfile.write(f"91{k} 19 {perho} -91{k}{overlap_str}\n")
+                elif prediction == 'custom':
+                    txtfile.write(f"91{k} 20 {customrho} -91{k}{overlap_str}\n")
+
+                k += 1
+
+            # Handle the last box separately
+            last_box = shield_coords[-1]
+            image_name, prediction, confidence, xmin, xmax, ymin, ymax = last_box
+            if prediction == 'lead':
+                txtfile.write(f"91{k} 17 {leadrho} -91{k}\n")
+            elif prediction == 'concrete':
+                txtfile.write(f"91{k} 18 {concreterho} -91{k}\n")
+            elif prediction == 'pe':
+                txtfile.write(f"91{k} 19 {perho} -91{k}\n")
+            elif prediction == 'custom':
+                txtfile.write(f"91{k} 20 {customrho} -91{k}\n")
+
+#            for item in shield_coords:
+#                image_name, prediction, confidence, xmin, xmax, ymin, ymax = item
+#                if(prediction=='lead'):
+#                    #txtfile.write('\n')
+#                    txtfile.write(f"91{k} 17 {leadrho} -91{k}\n")
+#                    k += 1
+#                if(prediction=='concrete'):
+#                    txtfile.write(f"91{k} 18 {concreterho} -91{k}\n")
+#                    k += 1
+#                if(prediction=='pe'):
+#                    txtfile.write(f"91{k} 19 {perho} -91{k}\n")
+#                    k += 1
+#                if(prediction=='custom'):
+#                    txtfile.write(f"91{k} 20 {customrho} -91{k}\n")
+#                    k += 1   
 
         #if(int(shieldcount) > 0):
         #    txtfile.write('$Shields\n')

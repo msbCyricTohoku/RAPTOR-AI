@@ -1,0 +1,9 @@
+Image Name,Prediction,Confidence,Coordinates
+img24.png,path,0.48,"283.0,387.0,305.0,408.0"
+img24.png,path,0.52,"23.0,119.0,44.0,140.0"
+img24.png,concrete,0.54,"91.0,78.0,395.0,103.0"
+img24.png,concrete,0.56,"378.0,80.0,405.0,301.0"
+img24.png,concrete,0.58,"96.0,273.0,391.0,297.0"
+img24.png,path,0.59,"273.0,189.0,294.0,210.0"
+img24.png,concrete,0.61,"65.0,385.0,92.0,479.0"
+img24.png,concrete,0.67,"65.0,178.0,92.0,347.0"

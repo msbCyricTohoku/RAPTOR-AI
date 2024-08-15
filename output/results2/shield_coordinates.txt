@@ -1,1 +1,0 @@
-xmin,xmax,ymin,ymax

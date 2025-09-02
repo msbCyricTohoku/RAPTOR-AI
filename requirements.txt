@@ -1,7 +1,18 @@
+#test requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.5.1+cpu
+torchvision==0.20.1+cpu
+
+opencv-python>=4.8.0
+numpy>=1.23,<2.0
 Pillow==9.1.0
-numpy
-torch
-ultralytics
-setuptools
-dill
-ttkthemes
+pandas>=1.5
+tqdm>=4.66
+PyYAML>=5.4
+requests>=2.31
+scipy>=1.10
+
+dill>=0.3.7
+setuptools<81      
+ultralytics 

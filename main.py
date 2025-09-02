@@ -168,7 +168,7 @@ class InferenceApp:
 
         #change --conf value if you wish to tweak the confidence for detected marks
         subprocess.run([
-            'python', f'{yolov5_path}/detect.py',
+            'python3', f'{yolov5_path}/detect.py',
             '--weights', weights_path,
             '--img', '640',
             '--conf', f'{modelconfidence}',
